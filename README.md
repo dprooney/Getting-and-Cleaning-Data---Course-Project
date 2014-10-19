@@ -1,4 +1,10 @@
 Getting-and-Cleaning-Data---Course-Project
 ==========================================
 
-Course project for JHU's Getting and Cleaning Data course
+This repository pertains to the course project for JHU's *Getting and Cleaning Data* course. It contains:
+
+* One R script: 'run_analysis.R'
+* The code book detailing the variables: 'CodeBook.md'
+* The data, contained in the directory 'UCI HAR Dataset'
+
+ 
