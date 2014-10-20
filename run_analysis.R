@@ -62,7 +62,7 @@ names(te_st)<-"Subject"
 
 training<-cbind(tr_st,tr_at,tr_xt_s,data.frame("Observation type"=rep("training",nrow(tr_st))))
 test<-cbind(te_st,te_at,te_xt_s,data.frame("Observation type"=rep("test",nrow(te_st))))
-tidy_data<-rbind(training,test)
+tidy_dataset<-rbind(training,test)
 
 # Create the second data set of averages
 
