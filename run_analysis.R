@@ -1,4 +1,4 @@
-# Read in the raw data
+# Read in the raw data. Note the data is not included in the repository.
 
 if (!exists("tr_xt")) tr_xt<-read.table("UCI HAR Dataset/train/X_train.txt")
 if (!exists("tr_yt")) tr_yt<-read.table("UCI HAR Dataset/train/y_train.txt")
@@ -7,17 +7,16 @@ if (!exists("te_xt")) te_xt<-read.table("UCI HAR Dataset/test/X_test.txt")
 if (!exists("te_yt")) te_yt<-read.table("UCI HAR Dataset/test/y_test.txt")
 if (!exists("te_st")) te_st<-read.table("UCI HAR Dataset/test/subject_test.txt")
 
-# Select out the mean and standard deviation data
+# Select out the mean and standard deviation data.
 
-m_and_sds<-rep(seq(0,160,40),each=6)+rep(1:6,5)
-m_and_sds<-c(m_and_sds,rep(seq(200,252,13),each=2)+rep(1:2,5))
-m_and_sds<-c(m_and_sds,rep(seq(265,423,79),each=6)+rep(1:6,3))
-m_and_sds<-c(m_and_sds,rep(seq(502,541,13),each=2)+rep(1:2,4))
-
+feat<-read.table("UCI HAR Dataset/features.txt",stringsAsFactors=FALSE)[,2]
+m_and_sds<-c(grep("-mean()",feat,fixed=TRUE),grep("-std()",feat,fixed=TRUE))
+  
 tr_xt_s<-tr_xt[,m_and_sds]
 te_xt_s<-te_xt[,m_and_sds]
 
-# Name the variables
+# Name the variables. Could have used the variable names in 'features.txt', but instead decided
+# to create less abbreviated ones.
 
 var_names<-c("Mean Body Acceleration (X dir)","Mean Body Acceleration (Y dir)","Mean Body Acceleration (Z dir)",
              "Stdev Body Acceleration (X dir)","Stdev Body Acceleration (Y dir)","Stdev Body Acceleration (Z dir)",
@@ -48,15 +47,15 @@ var_names<-c("Mean Body Acceleration (X dir)","Mean Body Acceleration (Y dir)","
 
 names(tr_xt_s)<-var_names
 names(te_xt_s)<-var_names
+names(tr_st)<-"Subject"
+names(te_st)<-"Subject"
 
 # Create activity names
  
 library(plyr)
-activities<-c("Walking","Walking upstairs","Walking downstairs","Sitting","Standing","Lying down")
+activities<-read.table("UCI HAR Dataset/activity_labels.txt",stringsAsFactors=FALSE)[,2]
 tr_at<-data.frame("Activity"=mapvalues(tr_yt$V1,1:6,activities))
 te_at<-data.frame("Activity"=mapvalues(te_yt$V1,1:6,activities))
-names(tr_st)<-"Subject"
-names(te_st)<-"Subject"
 
 # Merge the data sets
 
@@ -69,8 +68,8 @@ tidy_dataset<-rbind(training,test)
 averages<-NULL
 for (j in 1:30)
   {for (act in activities)
-     {averages<-rbind(averages,colMeans(tidy_data[tidy_data$Subject == j & tidy_data$Activity == act,3:65]))
+     {averages<-rbind(averages,colMeans(tidy_dataset[tidy_dataset$Subject == j & tidy_dataset$Activity == act,3:65]))
   }}
 
-step5_dataset<-data.frame("Subject"=rep(1:30,each=6),"Activity"=rep(activities,30),averages)
+averaged_dataset<-data.frame("Subject"=rep(1:30,each=6),"Activity"=rep(activities,30),averages)
 
